@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-4 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">{% if edit_component %}Edit Component{% else %}Add Component{% endif %}</h4>
+            </div>
+            <div class="card-body">
+                <form action="/components" method="post">
+                    {% if edit_component %}
+                    <input type="hidden" name="component_id" value="{{ edit_component.id }}">
+                    {% endif %}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Component Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required
+                            value="{{ edit_component.name if edit_component else '' }}" placeholder="e.g. Compact Road">
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="Chainring" {% if edit_component and edit_component.type=='Chainring'
+                                %}selected{% endif %}>Chainring</option>
+                            <option value="Cassette" {% if edit_component and edit_component.type=='Cassette'
+                                %}selected{% endif %}>Cassette</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="speed" class="form-label">Speed (Optional)</label>
+                        <input type="number" class="form-control" id="speed" name="speed"
+                            value="{{ edit_component.speed if edit_component and edit_component.speed else '' }}"
+                            placeholder="e.g. 11">
+                    </div>
+                    <div class="mb-3">
+                        <label for="teeth" class="form-label">Teeth (Comma separated)</label>
+                        <input type="text" class="form-control" id="teeth" name="teeth" required
+                            value="{{ edit_component.teeth_str if edit_component else '' }}"
+                            placeholder="e.g. 50, 34 or 11, 12, 13...">
+                        <div class="form-text">Enter the number of teeth for each cog/ring, separated by commas.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comments" class="form-label">Comments</label>
+                        <textarea class="form-control" id="comments" name="comments"
+                            rows="3">{{ (edit_component.comments or '') if edit_component else '' }}</textarea>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">{% if edit_component %}Update Component{% else
+                            %}Add Component{% endif %}</button>
+                        {% if edit_component %}
+                        <a href="/components" class="btn btn-outline-secondary">Cancel</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <h2 class="mb-4">Existing Components</h2>
+
+        <h4 class="text-primary border-bottom pb-2 mb-3">Chainrings</h4>
+        <div class="list-group mb-5 shadow-sm">
+            {% for ring in chainrings %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">{{ ring.name }}</h5>
+                    <p class="mb-1 text-muted small">Teeth: {{ ring.teeth }}</p>
+                    {% if ring.comments %}<small class="text-muted">{{ ring.comments }}</small>{% endif %}
+                </div>
+                <div class="btn-group btn-group-sm">
+                    <a href="/components/{{ ring.id }}" class="btn btn-outline-primary">Edit</a>
+                    <button onclick="deleteItem('/components/{{ ring.id }}')"
+                        class="btn btn-outline-danger">Delete</button>
+                </div>
+            </div>
+            {% else %}
+            <div class="list-group-item text-muted">No chainrings found.</div>
+            {% endfor %}
+        </div>
+
+        <h4 class="text-primary border-bottom pb-2 mb-3">Cassettes</h4>
+        <div class="list-group shadow-sm">
+            {% for cassette in cassettes %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">{{ cassette.name }}</h5>
+                    <p class="mb-1 text-muted small">Teeth: {{ cassette.teeth }}</p>
+                    {% if cassette.comments %}<small class="text-muted">{{ cassette.comments }}</small>{% endif %}
+                </div>
+                <div class="btn-group btn-group-sm">
+                    <a href="/components/{{ cassette.id }}" class="btn btn-outline-primary">Edit</a>
+                    <button onclick="deleteItem('/components/{{ cassette.id }}')"
+                        class="btn btn-outline-danger">Delete</button>
+                </div>
+            </div>
+            {% else %}
+            <div class="list-group-item text-muted">No cassettes found.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

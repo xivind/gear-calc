@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-5 align-items-center">
+    <div class="col">
+        <h1 class="display-5 fw-bold text-dark mb-2">My Gear Configurations</h1>
+        <p class="text-muted lead mb-0">Manage and analyze your bicycle gear ratio setups.</p>
+    </div>
+    <div class="col-auto">
+        <a href="/calculator" class="btn btn-primary btn-lg shadow-sm d-flex align-items-center gap-2">
+            <i class="bi bi-plus-lg"></i> New Configuration
+        </a>
+    </div>
+</div>
+
+{% if configs %}
+<div class="row g-4">
+    {% for config in configs %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title mb-0">
+                        <a href="/calculator/{{ config.id }}" class="stretched-link fw-bold fs-4">
+                            {{ config.name }}
+                        </a>
+                    </h5>
+                    <div class="dropdown" style="z-index: 2;">
+                        <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item text-danger" href="#"
+                                    onclick="deleteItem('/calculator/{{ config.id }}'); return false;">Delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="text-muted small text-uppercase fw-bold">Front</span>
+                            <span class="badge-subtle">{{ config.front_name }}</span>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="text-muted small text-uppercase fw-bold">Rear</span>
+                            <span class="badge-subtle">{{ config.rear_name }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-3 border-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="range-badge">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>{{ config.total_range }}% Range</span>
+                        </div>
+                        <small class="text-muted">{{ config.created_at }}</small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-state-icon">
+        <i class="bi bi-bicycle"></i>
+    </div>
+    <h3 class="fw-bold text-dark mb-2">No configurations yet</h3>
+    <p class="text-muted mb-4">Create your first gear ratio configuration to start analyzing your setup.</p>
+    <a href="/calculator" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-lg me-2"></i>Create Configuration
+    </a>
+</div>
+{% endif %}
+{% endblock %}

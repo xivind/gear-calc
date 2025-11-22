@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5 fw-bold">Gear Ratio Calculator</h1>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-5">
+    <div class="card-body">
+        <form action="/calculator" method="post">
+            {% if config %}
+            <input type="hidden" name="config_id" value="{{ config.id }}">
+            {% endif %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Configuration Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required
+                        value="{{ config.name if config else '' }}" placeholder="My Climbing Setup">
+                </div>
+                <div class="col-md-12">
+                    <label for="comments" class="form-label">Comments</label>
+                    <input type="text" class="form-control" id="comments" name="comments"
+                        value="{{ (config.comments or '') if config else '' }}" placeholder="Optional notes">
+                </div>
+                <div class="col-md-6">
+                    <label for="front_component_id" class="form-label">Front Chainring</label>
+                    <select class="tom-select" id="front_component_id" name="front_component_id" required>
+                        <option value="">Select Chainring...</option>
+                        {% for ring in chainrings %}
+                        <option value="{{ ring.value }}" {% if selected_front==ring.value %}selected{% endif %}>
+                            {{ ring.text }} ({{ ring.teeth | join(', ') }}T)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="rear_component_id" class="form-label">Rear Cassette</label>
+                    <select class="tom-select" id="rear_component_id" name="rear_component_id" required>
+                        <option value="">Select Cassette...</option>
+                        {% for cassette in cassettes %}
+                        <option value="{{ cassette.value }}" {% if selected_rear==cassette.value %}selected{% endif %}>
+                            {{ cassette.text }} ({{ cassette.teeth | join(', ') }}T)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="calculation-results">
+    {% include "partials/calculation_results.html" %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const frontSelect = document.getElementById('front_component_id');
+        const rearSelect = document.getElementById('rear_component_id');
+        const resultsDiv = document.getElementById('calculation-results');
+
+        function updateCalculation() {
+            const frontId = frontSelect.value;
+            const rearId = rearSelect.value;
+
+            if (frontId && rearId) {
+                const formData = new FormData();
+                formData.append('front_component_id', frontId);
+                formData.append('rear_component_id', rearId);
+
+                fetch('/calculate-preview', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        resultsDiv.innerHTML = html;
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                resultsDiv.innerHTML = '';
+            }
+        }
+
+        frontSelect.addEventListener('change', updateCalculation);
+        rearSelect.addEventListener('change', updateCalculation);
+    });
+</script>
+{% endblock %}
