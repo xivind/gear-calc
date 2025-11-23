@@ -60,42 +60,70 @@
         <h2 class="mb-4">Existing Components</h2>
 
         <h4 class="text-primary border-bottom pb-2 mb-3">Chainrings</h4>
-        <div class="list-group mb-5 shadow-sm">
+        <div class="row g-3 mb-5">
             {% for ring in chainrings %}
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="mb-1">{{ ring.name }}</h5>
-                    <p class="mb-1 text-muted small">Teeth: {{ ring.teeth }}</p>
-                    {% if ring.comments %}<small class="text-muted">{{ ring.comments }}</small>{% endif %}
-                </div>
-                <div class="btn-group btn-group-sm">
-                    <a href="/components/{{ ring.id }}" class="btn btn-outline-primary">Edit</a>
-                    <button onclick="deleteItem('/components/{{ ring.id }}')"
-                        class="btn btn-outline-danger">Delete</button>
+            <div class="col-md-6">
+                <div class="card h-100 border-0">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0 fw-bold">{{ ring.name }}</h5>
+                        </div>
+                        <p class="card-text text-muted small mb-2">
+                            <i class="bi bi-gear-fill me-1"></i> {{ ring.teeth }}T
+                        </p>
+                        {% if ring.comments %}
+                        <p class="card-text text-muted small mb-3 fst-italic">{{ ring.comments }}</p>
+                        {% else %}
+                        <div class="mb-3"></div>
+                        {% endif %}
+
+                        <div class="mt-auto d-flex gap-2">
+                            <a href="/components/{{ ring.id }}"
+                                class="btn btn-sm btn-outline-primary flex-grow-1">Edit</a>
+                            <button onclick="deleteItem('/components/{{ ring.id }}')"
+                                class="btn btn-sm btn-outline-danger flex-grow-1">Delete</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% else %}
-            <div class="list-group-item text-muted">No chainrings found.</div>
+            <div class="col-12">
+                <div class="alert alert-light text-muted text-center">No chainrings found.</div>
+            </div>
             {% endfor %}
         </div>
 
         <h4 class="text-primary border-bottom pb-2 mb-3">Cassettes</h4>
-        <div class="list-group shadow-sm">
+        <div class="row g-3">
             {% for cassette in cassettes %}
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="mb-1">{{ cassette.name }}</h5>
-                    <p class="mb-1 text-muted small">Teeth: {{ cassette.teeth }}</p>
-                    {% if cassette.comments %}<small class="text-muted">{{ cassette.comments }}</small>{% endif %}
-                </div>
-                <div class="btn-group btn-group-sm">
-                    <a href="/components/{{ cassette.id }}" class="btn btn-outline-primary">Edit</a>
-                    <button onclick="deleteItem('/components/{{ cassette.id }}')"
-                        class="btn btn-outline-danger">Delete</button>
+            <div class="col-md-6">
+                <div class="card h-100 border-0">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0 fw-bold">{{ cassette.name }}</h5>
+                        </div>
+                        <p class="card-text text-muted small mb-2">
+                            <i class="bi bi-gear-wide-connected me-1"></i> {{ cassette.teeth }}T
+                        </p>
+                        {% if cassette.comments %}
+                        <p class="card-text text-muted small mb-3 fst-italic">{{ cassette.comments }}</p>
+                        {% else %}
+                        <div class="mb-3"></div>
+                        {% endif %}
+
+                        <div class="mt-auto d-flex gap-2">
+                            <a href="/components/{{ cassette.id }}"
+                                class="btn btn-sm btn-outline-primary flex-grow-1">Edit</a>
+                            <button onclick="deleteItem('/components/{{ cassette.id }}')"
+                                class="btn btn-sm btn-outline-danger flex-grow-1">Delete</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% else %}
-            <div class="list-group-item text-muted">No cassettes found.</div>
+            <div class="col-12">
+                <div class="alert alert-light text-muted text-center">No cassettes found.</div>
+            </div>
             {% endfor %}
         </div>
     </div>
