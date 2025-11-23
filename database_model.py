@@ -23,3 +23,7 @@ class GearConfiguration(BaseModel):
     rear_component_id = ForeignKeyField(Component, backref='rear_configs')
     comments = TextField(null=True)
     created_at = DateTimeField(default=datetime.datetime.now)
+
+class UserPreference(BaseModel): # Inherit from BaseModel for consistency
+    min_ratio = FloatField(default=1.0)
+    max_ratio = FloatField(default=5.0)

@@ -4,18 +4,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def calculate_gear_ratios(front_teeth, rear_teeth):
+def calculate_gear_ratios(front_teeth, rear_teeth, preferences=None):
     """
     Calculate gear ratios for given front and rear teeth.
     Returns a list of dictionaries, one for each front chainring.
     """
     results = []
-    
-    # Sort rear teeth (usually large to small for display in list? 
-    # The image shows 46, 37, 32... which is large to small (easy to hard gears? No, 46T rear is easy, 11T is hard).
-    # Ratio 0.783 is small (easy). Ratio 3.273 is large (hard).
-    # So the image is sorted by Ratio Ascending (Easy to Hard).
-    # Rear cogs: Large to Small.
     
     sorted_rear = sorted(rear_teeth, reverse=True)
     
@@ -30,11 +24,27 @@ def calculate_gear_ratios(front_teeth, rear_teeth):
             if prev_ratio > 0:
                 change_pct = round(((ratio - prev_ratio) / prev_ratio) * 100, 1)
             
+            # Determine status based on preferences
+            status = "normal"
+            if preferences:
+                min_r = preferences.min_ratio
+                max_r = preferences.max_ratio
+                range_span = max_r - min_r
+                warning_buffer = range_span * 0.1 # 10% buffer
+                
+                if ratio < min_r or ratio > max_r:
+                    status = "poor"
+                elif (ratio < min_r + warning_buffer) or (ratio > max_r - warning_buffer):
+                    status = "warning"
+                else:
+                    status = "optimal"
+
             gears.append({
                 "rear_tooth": rear,
                 "ratio": ratio,
                 "gear_num": i + 1,
-                "change_pct": change_pct if i > 0 else None
+                "change_pct": change_pct if i > 0 else None,
+                "status": status
             })
             prev_ratio = ratio
             
@@ -42,7 +52,7 @@ def calculate_gear_ratios(front_teeth, rear_teeth):
         if gears:
             min_ratio = gears[0]["ratio"]
             max_ratio = gears[-1]["ratio"]
-            total_range = round(((max_ratio - min_ratio) / min_ratio) * 100)
+            total_range = calculate_total_range_value([front], rear_teeth)
         else:
             total_range = 0
         
@@ -199,15 +209,23 @@ def get_configuration_details(config_id):
         rear_teeth = parse_teeth(rear.teeth)
     except Exception as e:
         logger.error(f"Error parsing teeth for config {config_id}: {e}")
-        return None
+        return None # Return None if teeth parsing fails
     
-    ratios = calculate_gear_ratios(front_teeth, rear_teeth)
+    # Get user preferences
+    preferences = database_manager.get_user_preferences()
+
+    # Calculate ratios with preferences
+    gear_tables = calculate_gear_ratios(front_teeth, rear_teeth, preferences)
+    
+    # Calculate overall total range for the configuration
+    total_range = calculate_total_range_value(front_teeth, rear_teeth)
     
     return {
         "config": config,
-        "front": front,
-        "rear": rear,
-        "calculation": ratios
+        "front_component": front,
+        "rear_component": rear,
+        "gear_tables": gear_tables,
+        "total_range": total_range
     }
 
 def delete_component(component_id):

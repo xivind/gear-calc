@@ -35,6 +35,19 @@ async def calculator_page(request: Request):
         "config": None
     })
 
+@app.get("/preferences", response_class=HTMLResponse)
+async def get_preferences(request: Request):
+    prefs = database_manager.get_user_preferences()
+    return templates.TemplateResponse("preferences.html", {"request": request, "preferences": prefs})
+
+@app.post("/preferences")
+async def save_preferences(
+    min_ratio: float = Form(...),
+    max_ratio: float = Form(...)
+):
+    database_manager.update_user_preferences(min_ratio, max_ratio)
+    return RedirectResponse(url="/?msg=Preferences saved successfully", status_code=303)
+
 @app.get("/calculator/{config_id}", response_class=HTMLResponse)
 async def calculator_detail(request: Request, config_id: str):
     details = business_logic.get_configuration_details(config_id)
@@ -49,9 +62,10 @@ async def calculator_detail(request: Request, config_id: str):
         "chainrings": chainrings,
         "cassettes": cassettes,
         "config": details["config"],
-        "selected_front": details["front"].id,
-        "selected_rear": details["rear"].id,
-        "calculation": details["calculation"]
+        "selected_front": details["front_component"].id,
+        "selected_rear": details["rear_component"].id,
+        "gear_tables": details["gear_tables"],
+        "total_range": details["total_range"]
     })
 
 @app.post("/calculate-preview", response_class=HTMLResponse)

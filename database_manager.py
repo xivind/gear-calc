@@ -1,5 +1,5 @@
 from peewee import SqliteDatabase
-from database_model import db, Component, GearConfiguration
+from database_model import db, Component, GearConfiguration, UserPreference
 from utils import generate_uuid
 import logging
 import datetime
@@ -13,8 +13,27 @@ def initialize_db():
     database = SqliteDatabase(DATABASE_NAME)
     db.initialize(database)
     db.connect()
-    db.create_tables([Component, GearConfiguration], safe=True)
+    _create_tables()
     logger.info("Database initialized and tables created.")
+
+def _create_tables():
+    with db:
+        db.create_tables([Component, GearConfiguration, UserPreference], safe=True)
+
+def get_user_preferences():
+    """Get the user preferences. Create default if not exists."""
+    try:
+        return UserPreference.get_by_id(1)
+    except UserPreference.DoesNotExist:
+        return UserPreference.create(min_ratio=1.0, max_ratio=5.0)
+
+def update_user_preferences(min_ratio, max_ratio):
+    """Update user preferences."""
+    prefs = get_user_preferences()
+    prefs.min_ratio = min_ratio
+    prefs.max_ratio = max_ratio
+    prefs.save()
+    return prefs
 
 def add_component(name, type, teeth, speed=None, comments=None):
     """Add a new component to the database."""
