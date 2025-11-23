@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
+  <!-- Gear Icon -->
+  <g transform="translate(25, 25)">
+    <circle cx="0" cy="0" r="20" fill="#2563eb" />
+    <path d="M0 -24 L5 -18 L-5 -18 Z" fill="#2563eb" transform="rotate(0)" />
+    <path d="M0 -24 L5 -18 L-5 -18 Z" fill="#2563eb" transform="rotate(45)" />
+    <path d="M0 -24 L5 -18 L-5 -18 Z" fill="#2563eb" transform="rotate(90)" />
+    <path d="M0 -24 L5 -18 L-5 -18 Z" fill="#2563eb" transform="rotate(135)" />
+    <path d="M0 -24 L5 -18 L-5 -18 Z" fill="#2563eb" transform="rotate(180)" />
+    <path d="M0 -24 L5 -18 L-5 -18 Z" fill="#2563eb" transform="rotate(225)" />
+    <path d="M0 -24 L5 -18 L-5 -18 Z" fill="#2563eb" transform="rotate(270)" />
+    <path d="M0 -24 L5 -18 L-5 -18 Z" fill="#2563eb" transform="rotate(315)" />
+    <circle cx="0" cy="0" r="8" fill="#ffffff" />
+  </g>
+  
+  <!-- Text -->
+  <text x="60" y="35" font-family="Inter, sans-serif" font-weight="800" font-size="28" fill="#ffffff">
+    Gear<tspan fill="#2563eb">Calc</tspan>
+  </text>
+</svg>

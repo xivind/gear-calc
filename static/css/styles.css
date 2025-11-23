@@ -50,7 +50,13 @@ h6 {
 
 .card:hover .card-title a {
     background-size: 100% 2px;
-    color: #2563eb;
+    color: #212529;
+}
+
+.navbar-brand img {
+    height: 32px;
+    width: auto;
+    /* Make logo white for dark navbar */
 }
 
 /* Badges & Tags */
