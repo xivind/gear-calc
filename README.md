@@ -40,24 +40,27 @@ Gear Calc is a lightweight web application built with:
 
 1.  Start the server:
     ```bash
-    uvicorn main:app --reload
+    uvicorn main:app --host 0.0.0.0 --port 8005 --reload --log-config uvicorn_log_config.ini
     ```
 
 2.  Open your browser and navigate to:
     ```
-    http://localhost:8000
+    http://localhost:8005
     ```
 
 ### Docker
 
 You can also run Gear Calc using Docker:
 
-1.  Build the image:
+1.  Use the provided script (recommended):
     ```bash
-    docker build -t gear-calc .
+    ./create-container-gearcalc.sh
     ```
 
-2.  Run the container:
+2.  Or manually:
     ```bash
-    docker run -p 8000:8000 gear-calc
+    docker build -t gear-calc .
+    docker run -d --name=gear-calc -p 8005:8005 -v ~/code/container_data:/app/data gear-calc
     ```
+
+The application will be available at `http://localhost:8005`

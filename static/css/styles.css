@@ -100,6 +100,35 @@ h6 {
     box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
 }
 
+/* Delicate Plus Button */
+.btn-new-config {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #ffffff, #e2e8f0);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-new-config:hover {
+    background: linear-gradient(145deg, #2563eb, #1d4ed8);
+    color: white;
+    border-color: #2563eb;
+    transform: translateY(-2px) rotate(90deg);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-new-config:active {
+    transform: translateY(0) rotate(90deg);
+}
+
 /* Gear List Table */
 .gear-list-table {
     border-collapse: separate;

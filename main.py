@@ -5,6 +5,7 @@ from fastapi.templating import Jinja2Templates
 import business_logic
 import database_manager
 from logger import logger
+from seed_data import seed_database
 import uvicorn
 
 app = FastAPI()
@@ -15,9 +16,28 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Setup templates
 templates = Jinja2Templates(directory="templates")
 
+def health_check():
+    """Test database connectivity and write healthcheck status"""
+    try:
+        # Test database connectivity with a simple query
+        from database_model import Component
+        Component.select().limit(1).execute()
+        with open("status.txt", "w", encoding='utf-8') as file:
+            file.write("ok")
+        logger.info("Health check passed")
+        return True
+    except Exception as error:
+        logger.error(f"Health check failed: {error}")
+        with open("status.txt", "w", encoding='utf-8') as file:
+            file.write("error")
+        return False
+
 @app.on_event("startup")
 def startup_event():
     database_manager.initialize_db()
+    seed_database()
+    logger.info("Performing startup health check...")
+    health_check()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -74,10 +94,10 @@ async def calculate_preview(
     front_component_id: str = Form(...),
     rear_component_id: str = Form(...)
 ):
-    calculation = business_logic.calculate_from_components(front_component_id, rear_component_id)
+    gear_tables = business_logic.calculate_from_components(front_component_id, rear_component_id)
     return templates.TemplateResponse("partials/calculation_results.html", {
         "request": request,
-        "calculation": calculation
+        "gear_tables": gear_tables
     })
 
 @app.post("/calculator")

@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
             sortField: {
                 field: "text",
                 direction: "asc"
-            }
+            },
+            dropdownParent: 'body'  // Render dropdown outside card to prevent clipping
         });
     });
 });

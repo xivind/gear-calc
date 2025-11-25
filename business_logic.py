@@ -175,10 +175,25 @@ def save_component(name, type, teeth_str, speed=None, comments=None, component_i
             teeth_list = [int(t) for t in teeth_str]
         else:
             teeth_list = [int(t.strip()) for t in teeth_str.split(',')]
+
+        # Validate all teeth values are positive integers
+        for tooth in teeth_list:
+            if tooth <= 0:
+                raise ValueError("Teeth values must be positive integers.")
+
         teeth_json = json.dumps(teeth_list)
-    except ValueError:
-        raise ValueError("Invalid teeth format. Must be comma-separated numbers.")
-    
+    except ValueError as e:
+        if "positive integers" in str(e):
+            raise e
+        raise ValueError("Invalid teeth format. Must be comma-separated whole numbers (integers) only, no decimals.")
+
+    # Validate speed if provided
+    if speed is not None:
+        if speed <= 0:
+            raise ValueError("Speed must be a positive integer.")
+        if speed != len(teeth_list):
+            raise ValueError(f"Speed value ({speed}) must match the number of teeth values ({len(teeth_list)}).")
+
     if component_id:
         return database_manager.update_component(component_id, name, type, teeth_json, speed, comments)
     else:
@@ -238,8 +253,11 @@ def calculate_from_components(front_id, rear_id):
     """Calculate ratios based on component IDs."""
     front = get_component(front_id)
     rear = get_component(rear_id)
-    
+
     if not front or not rear:
         return None
-        
-    return calculate_gear_ratios(front.teeth_list, rear.teeth_list)
+
+    # Get user preferences for color coding
+    preferences = database_manager.get_user_preferences()
+
+    return calculate_gear_ratios(front.teeth_list, rear.teeth_list, preferences)

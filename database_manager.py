@@ -3,14 +3,16 @@ from database_model import db, Component, GearConfiguration, UserPreference
 from utils import generate_uuid
 import logging
 import datetime
+import os
 
 logger = logging.getLogger(__name__)
 
-DATABASE_NAME = "gear_calc.db"
+DATABASE_PATH = os.getenv("DATABASE_PATH", "./data/gear_calc.db")
+os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
 
 def initialize_db():
     """Initialize the database connection and create tables."""
-    database = SqliteDatabase(DATABASE_NAME)
+    database = SqliteDatabase(DATABASE_PATH)
     db.initialize(database)
     db.connect()
     _create_tables()

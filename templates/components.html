@@ -8,7 +8,7 @@
                 <h4 class="mb-0">{% if edit_component %}Edit Component{% else %}Add Component{% endif %}</h4>
             </div>
             <div class="card-body">
-                <form action="/components" method="post">
+                <form id="componentForm" action="/components" method="post">
                     {% if edit_component %}
                     <input type="hidden" name="component_id" value="{{ edit_component.id }}">
                     {% endif %}
@@ -28,16 +28,18 @@
                     </div>
                     <div class="mb-3">
                         <label for="speed" class="form-label">Speed (Optional)</label>
-                        <input type="number" class="form-control" id="speed" name="speed"
+                        <input type="number" class="form-control" id="speed" name="speed" step="1" min="1"
                             value="{{ edit_component.speed if edit_component and edit_component.speed else '' }}"
                             placeholder="e.g. 11">
+                        <div class="form-text">Number of cogs/rings (e.g., 11 for 11-speed). If provided, must match the count of teeth values below.</div>
                     </div>
                     <div class="mb-3">
                         <label for="teeth" class="form-label">Teeth (Comma separated)</label>
                         <input type="text" class="form-control" id="teeth" name="teeth" required
                             value="{{ edit_component.teeth_str if edit_component else '' }}"
-                            placeholder="e.g. 50, 34 or 11, 12, 13...">
-                        <div class="form-text">Enter the number of teeth for each cog/ring, separated by commas.</div>
+                            placeholder="e.g. 50, 34 or 11, 12, 13..."
+                            pattern="^[0-9]+(,\s*[0-9]+)*$">
+                        <div class="form-text">Enter whole numbers only (integers) for each cog/ring, separated by commas.</div>
                     </div>
                     <div class="mb-3">
                         <label for="comments" class="form-label">Comments</label>
@@ -70,6 +72,7 @@
                         </div>
                         <p class="card-text text-muted small mb-2">
                             <i class="bi bi-gear-fill me-1"></i> {{ ring.teeth }}T
+                            {% if ring.speed %}<span class="ms-2 badge bg-secondary">{{ ring.speed }}-speed</span>{% endif %}
                         </p>
                         {% if ring.comments %}
                         <p class="card-text text-muted small mb-3 fst-italic">{{ ring.comments }}</p>
@@ -104,6 +107,7 @@
                         </div>
                         <p class="card-text text-muted small mb-2">
                             <i class="bi bi-gear-wide-connected me-1"></i> {{ cassette.teeth }}T
+                            {% if cassette.speed %}<span class="ms-2 badge bg-secondary">{{ cassette.speed }}-speed</span>{% endif %}
                         </p>
                         {% if cassette.comments %}
                         <p class="card-text text-muted small mb-3 fst-italic">{{ cassette.comments }}</p>
@@ -128,4 +132,54 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('componentForm');
+    const speedInput = document.getElementById('speed');
+    const teethInput = document.getElementById('teeth');
+
+    form.addEventListener('submit', function(event) {
+        const speedValue = speedInput.value.trim();
+        const teethValue = teethInput.value.trim();
+
+        // Only validate if speed is provided
+        if (speedValue) {
+            // Parse teeth string to count values
+            const teethArray = teethValue.split(',').map(t => t.trim()).filter(t => t);
+            const teethCount = teethArray.length;
+            const speed = parseInt(speedValue);
+
+            // Validate that all teeth values are integers
+            const allIntegers = teethArray.every(t => /^\d+$/.test(t) && !t.includes('.'));
+
+            if (!allIntegers) {
+                event.preventDefault();
+                alert('Teeth values must be whole numbers (integers) only, no decimals.');
+                teethInput.focus();
+                return false;
+            }
+
+            // Validate speed matches teeth count
+            if (speed !== teethCount) {
+                event.preventDefault();
+                alert(`Speed value (${speed}) must match the number of teeth values (${teethCount}).\n\nYou entered ${teethCount} teeth values but specified ${speed}-speed.`);
+                speedInput.focus();
+                return false;
+            }
+        } else {
+            // Even without speed, validate teeth are integers
+            const teethArray = teethValue.split(',').map(t => t.trim()).filter(t => t);
+            const allIntegers = teethArray.every(t => /^\d+$/.test(t) && !t.includes('.'));
+
+            if (!allIntegers) {
+                event.preventDefault();
+                alert('Teeth values must be whole numbers (integers) only, no decimals.');
+                teethInput.focus();
+                return false;
+            }
+        }
+    });
+});
+</script>
 {% endblock %}
