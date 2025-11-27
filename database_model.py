@@ -11,7 +11,7 @@ class BaseModel(Model):
 class Component(BaseModel):
     id = CharField(primary_key=True)
     name = CharField()
-    type = CharField() # Chainring, Cog, Cassette
+    type = CharField() # Chainring or Cassette
     speed = IntegerField(null=True) # e.g. 11 for 11-speed
     teeth = TextField() # JSON string or comma-separated list of teeth
     comments = TextField(null=True)
@@ -24,6 +24,12 @@ class GearConfiguration(BaseModel):
     comments = TextField(null=True)
     created_at = DateTimeField(default=datetime.datetime.now)
 
-class UserPreference(BaseModel): # Inherit from BaseModel for consistency
+class UserPreference(BaseModel):
+    """User preferences for gear ratio color coding.
+
+    This is designed as a singleton - only one record (ID=1) should exist.
+    The application always fetches/creates this single record.
+    """
+    id = AutoField(primary_key=True)
     min_ratio = FloatField(default=0.8)
     max_ratio = FloatField(default=3.2)

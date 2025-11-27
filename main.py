@@ -113,12 +113,9 @@ async def save_configuration(
         if config_id:
             business_logic.update_configuration(config_id, name, front_component_id, rear_component_id, comments)
             msg = "Configuration updated successfully"
-            redirect_id = config_id
         else:
-            new_config = business_logic.create_configuration(name, front_component_id, rear_component_id, comments)
+            business_logic.create_configuration(name, front_component_id, rear_component_id, comments)
             msg = "Configuration created successfully"
-            msg = "Configuration created successfully"
-            redirect_id = new_config.id
         return RedirectResponse(url=f"/?msg={msg}", status_code=303)
     except Exception as e:
         logger.error(f"Error saving configuration: {e}")
@@ -135,8 +132,8 @@ async def delete_configuration(config_id: str):
 
 @app.get("/components", response_class=HTMLResponse)
 async def components_page(request: Request):
-    chainrings = database_manager.get_components("Chainring")
-    cassettes = database_manager.get_components("Cassette")
+    chainrings = business_logic.get_components_by_type("Chainring")
+    cassettes = business_logic.get_components_by_type("Cassette")
     return templates.TemplateResponse("components.html", {
         "request": request,
         "chainrings": chainrings,
@@ -146,8 +143,8 @@ async def components_page(request: Request):
 
 @app.get("/components/{component_id}", response_class=HTMLResponse)
 async def edit_component_page(request: Request, component_id: str):
-    chainrings = database_manager.get_components("Chainring")
-    cassettes = database_manager.get_components("Cassette")
+    chainrings = business_logic.get_components_by_type("Chainring")
+    cassettes = business_logic.get_components_by_type("Cassette")
     component = business_logic.get_component(component_id)
     
     return templates.TemplateResponse("components.html", {

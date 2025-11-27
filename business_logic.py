@@ -209,6 +209,10 @@ def get_component(component_id):
         comp.teeth_str = ", ".join(map(str, comp.teeth_list))
     return comp
 
+def get_components_by_type(component_type):
+    """Get all components of a specific type."""
+    return database_manager.get_components(type=component_type)
+
 def get_configuration_details(config_id):
     """Get details for a specific configuration including calculated ratios."""
     config = database_manager.get_configuration(config_id)
