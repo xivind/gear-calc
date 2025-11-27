@@ -25,5 +25,5 @@ class GearConfiguration(BaseModel):
     created_at = DateTimeField(default=datetime.datetime.now)
 
 class UserPreference(BaseModel): # Inherit from BaseModel for consistency
-    min_ratio = FloatField(default=1.0)
-    max_ratio = FloatField(default=5.0)
+    min_ratio = FloatField(default=0.8)
+    max_ratio = FloatField(default=3.2)

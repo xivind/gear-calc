@@ -36,6 +36,7 @@ def health_check():
 def startup_event():
     database_manager.initialize_db()
     seed_database()
+    database_manager.cleanup_orphaned_configurations()
     logger.info("Performing startup health check...")
     health_check()
 

@@ -22,7 +22,9 @@ async function deleteItem(url) {
         });
 
         if (response.ok) {
-            window.location.reload();
+            // Redirect with success message
+            const currentPath = window.location.pathname;
+            window.location.href = `${currentPath}?msg=Item deleted successfully`;
         } else {
             alert('Failed to delete item');
         }

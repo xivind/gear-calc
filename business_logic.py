@@ -244,6 +244,14 @@ def get_configuration_details(config_id):
     }
 
 def delete_component(component_id):
+    """Delete a component and all configurations that use it."""
+    # First, find and delete all configurations using this component
+    configs = database_manager.get_configurations_using_component(component_id)
+    for config in configs:
+        logger.info(f"Deleting configuration {config.name} (id: {config.id}) that uses component {component_id}")
+        database_manager.delete_configuration(config.id)
+
+    # Then delete the component itself
     return database_manager.delete_component(component_id)
 
 def delete_configuration(config_id):

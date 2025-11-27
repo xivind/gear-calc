@@ -27,7 +27,7 @@ def get_user_preferences():
     try:
         return UserPreference.get_by_id(1)
     except UserPreference.DoesNotExist:
-        return UserPreference.create(min_ratio=1.0, max_ratio=5.0)
+        return UserPreference.create(min_ratio=0.8, max_ratio=3.2)
 
 def update_user_preferences(min_ratio, max_ratio):
     """Update user preferences."""
@@ -85,6 +85,18 @@ def get_component(component_id):
     except Exception as e:
         logger.error(f"Error getting component: {e}")
         return None
+
+def get_configurations_using_component(component_id):
+    """Get all configurations that use a specific component."""
+    try:
+        configs = GearConfiguration.select().where(
+            (GearConfiguration.front_component_id == component_id) |
+            (GearConfiguration.rear_component_id == component_id)
+        )
+        return list(configs)
+    except Exception as e:
+        logger.error(f"Error getting configurations using component: {e}")
+        return []
 
 def delete_component(component_id):
     """Delete a component by ID."""
@@ -148,3 +160,32 @@ def delete_configuration(config_id):
     except Exception as e:
         logger.error(f"Error deleting configuration: {e}")
         raise
+
+def cleanup_orphaned_configurations():
+    """Delete configurations that reference non-existent components."""
+    try:
+        # Get all component IDs that exist
+        existing_component_ids = set(c.id for c in Component.select(Component.id))
+
+        # Get all configurations with their raw foreign key values
+        all_configs = GearConfiguration.select()
+        deleted_count = 0
+
+        for config in all_configs:
+            # Access the raw foreign key ID fields (not the related objects)
+            front_id = config.front_component_id_id
+            rear_id = config.rear_component_id_id
+
+            # Check if the referenced components exist
+            if front_id not in existing_component_ids or rear_id not in existing_component_ids:
+                logger.info(f"Deleting orphaned configuration: {config.id} (name: {config.name})")
+                config.delete_instance()
+                deleted_count += 1
+
+        if deleted_count > 0:
+            logger.info(f"Cleaned up {deleted_count} orphaned configuration(s)")
+
+        return deleted_count
+    except Exception as e:
+        logger.error(f"Error cleaning up orphaned configurations: {e}")
+        return 0
