@@ -11,14 +11,15 @@ def seed_database():
         return
 
     # Chainrings
-    add_component("Compact Road", "Chainring", json.dumps([50, 34]), speed=11, comments="Standard compact road double")
-    add_component("Standard Road", "Chainring", json.dumps([53, 39]), speed=11, comments="Standard road double")
-    add_component("Gravel 1x", "Chainring", json.dumps([40]), speed=11, comments="Gravel single ring")
+    add_component("Specialites TA ONE X110 42T", "Chainring", json.dumps([42]), speed=1, comments="TA ONE X110 for 1x setups")
+    add_component("Shimano GRX RX600 40T", "Chainring", json.dumps([40]), speed=1, comments="Shimano GRX for 1x setups")
+    add_component("Race Face 36T", "Chainring", json.dumps([36]), speed=1, comments="Chainring for 1x setups")
+    add_component("Wolf Tooth 36T", "Chainring", json.dumps([36]), speed=1, comments="Wolf Tooth chainring for 1x setups")
 
     # Cassettes
-    add_component("Road 11-28", "Cassette", json.dumps([11, 12, 13, 14, 15, 17, 19, 21, 23, 25, 28]), speed=11, comments="Standard road cassette")
-    add_component("Road 11-32", "Cassette", json.dumps([11, 12, 13, 14, 16, 18, 20, 22, 25, 28, 32]), speed=11, comments="Climbing road cassette")
-    add_component("Gravel 11-42", "Cassette", json.dumps([11, 13, 15, 17, 19, 21, 24, 28, 32, 36, 42]), speed=11, comments="Wide range gravel cassette")
+    add_component("Deore XT CS-M8000 11-46", "Cassette", json.dumps([11, 13, 15, 17, 19, 21, 24, 28, 32, 37, 46]), speed=11, comments="High range MTB cassette")
+    add_component("Deore XT CS-M8000 11-42", "Cassette", json.dumps([11, 13, 15, 17, 19, 21, 24, 27, 31, 35, 42]), speed=11, comments="Medium range MTB cassette")
+    add_component("Deore XT CS-M8000 11-40", "Cassette", json.dumps([11, 13, 15, 17, 19, 21, 24, 27, 31, 35, 40]), speed=11, comments="Low range MTB cassette")
 
     logger.info("Database seeded successfully with default components.")
 
