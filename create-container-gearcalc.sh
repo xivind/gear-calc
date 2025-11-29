@@ -16,6 +16,9 @@ mkdir -p ~/code/container_data
 # Create and run container
 docker run -d \
   --name=gear-calc \
+  --log-driver json-file \
+  --log-opt max-size=10m \
+  --log-opt max-file=3 \
   -e TZ=Europe/Stockholm \
   -v ~/code/container_data:/app/data \
   --restart unless-stopped \
