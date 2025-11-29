@@ -64,3 +64,74 @@ You can also run Gear Calc using Docker:
     ```
 
 The application will be available at `http://localhost:8005`
+
+## Data Persistence
+
+- **Database location**: `~/code/container_data/gear_calc.db` (both Docker and local development)
+- Automatically created on first run with directory creation
+- Survives container restarts and rebuilds
+- Seed data added automatically if database is new
+- Can be overridden with `DATABASE_PATH` environment variable
+
+## Logging
+
+- Logs are written to **both stdout and file**
+- Log format: `YYYY-MM-DD HH:MM:SS - LEVEL - MESSAGE`
+- Includes uvicorn, access, and application logs
+- **File location**: `~/code/container_data/logs/gear_calc.log` (persisted on host)
+- **Log rotation**: Application-level RotatingFileHandler (max 3 files × 10KB each)
+
+To view logs:
+```bash
+# Docker logs (stdout)
+docker logs gear-calc
+docker logs -f gear-calc  # Follow in real-time
+
+# Log file (persisted)
+tail -f ~/code/container_data/logs/gear_calc.log
+cat ~/code/container_data/logs/gear_calc.log
+
+# Backup log files (rotated)
+ls -lh ~/code/container_data/logs/
+```
+
+For local development, logs appear in both the console and `~/code/container_data/logs/gear_calc.log`.
+
+## Backup
+
+Use the provided backup script:
+```bash
+./backup_db.sh
+```
+
+Or manually backup your data:
+```bash
+cp ~/code/container_data/gear_calc.db ~/backup/gear_calc_$(date +%Y%m%d).db
+```
+
+To restore from backup:
+```bash
+docker stop gear-calc
+cp ~/backup/gear_calc_20250115.db ~/code/container_data/gear_calc.db
+docker start gear-calc
+```
+
+## Useful Docker Commands
+
+```bash
+# View logs
+docker logs gear-calc
+docker logs -f gear-calc  # Follow in real-time
+
+# Stop the container
+docker stop gear-calc
+
+# Start the container
+docker start gear-calc
+
+# Restart the container
+docker restart gear-calc
+
+# Remove the container (data persists in ~/code/container_data)
+docker rm gear-calc
+```

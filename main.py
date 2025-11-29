@@ -4,9 +4,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import business_logic
 import database_manager
-from logger import logger
+import logging
 from seed_data import seed_database
 import uvicorn
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
