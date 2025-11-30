@@ -18,29 +18,14 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Setup templates
 templates = Jinja2Templates(directory="templates")
 
-def health_check():
-    """Test database connectivity and write healthcheck status"""
-    try:
-        # Test database connectivity with a simple query
-        from database_model import Component
-        Component.select().limit(1).execute()
-        with open("status.txt", "w", encoding='utf-8') as file:
-            file.write("ok")
-        logger.info("Health check passed")
-        return True
-    except Exception as error:
-        logger.error(f"Health check failed: {error}")
-        with open("status.txt", "w", encoding='utf-8') as file:
-            file.write("error")
-        return False
-
 @app.on_event("startup")
 def startup_event():
+    """Initialize database on startup."""
+    logger.info("Initializing database...")
     database_manager.initialize_db()
     seed_database()
     database_manager.cleanup_orphaned_configurations()
-    logger.info("Performing startup health check...")
-    health_check()
+    logger.info("Application ready")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):

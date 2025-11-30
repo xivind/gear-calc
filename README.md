@@ -39,8 +39,16 @@ Gear Calc is a lightweight web application built with:
 ### Running the App
 
 1.  Start the server:
+
+    **With hot reload (detects code changes automatically):**
     ```bash
     uvicorn main:app --host 0.0.0.0 --port 8005 --reload --log-config uvicorn_log_config.ini
+    ```
+    Note: You may see "1 change detected" messages due to log files being written. This is harmless - uvicorn detects the changes but doesn't actually reload.
+
+    **Without hot reload (clean console, manual restart needed):**
+    ```bash
+    uvicorn main:app --host 0.0.0.0 --port 8005 --log-config uvicorn_log_config.ini
     ```
 
 2.  Open your browser and navigate to:

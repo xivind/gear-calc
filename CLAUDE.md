@@ -11,10 +11,15 @@ Gear Calc is a self-hosted bicycle gear ratio calculator built with FastAPI and 
 ### Running the Application
 
 ```bash
-# Development mode with auto-reload and logging
+# Development with hot reload (detects code changes automatically)
+# Note: You may see "1 change detected" messages due to log files being written.
+# This is harmless - uvicorn detects the changes but doesn't actually reload.
 uvicorn main:app --host 0.0.0.0 --port 8005 --reload --log-config uvicorn_log_config.ini
 
-# Production mode (in container)
+# Development without hot reload (clean console output, manual restart needed)
+uvicorn main:app --host 0.0.0.0 --port 8005 --log-config uvicorn_log_config.ini
+
+# Production mode (same as above, no reload)
 uvicorn main:app --host 0.0.0.0 --port 8005 --log-config uvicorn_log_config.ini
 ```
 
@@ -32,7 +37,7 @@ docker run -d --name=gear-calc -p 8005:8005 -v ~/code/container_data:/app/data g
 ```
 
 The container includes:
-- Health check monitoring (checks status.txt every 10 minutes)
+- Health check monitoring (curl-based HTTP endpoint check every 10 minutes)
 - Persistent data storage in ~/code/container_data
 - Auto-restart unless manually stopped
 - Timezone set to Europe/Stockholm
@@ -56,11 +61,11 @@ This script safely stops the container, backs up the database to /home/pi/backup
 
 ### Health Monitoring
 
-The application includes a health check system:
-- `health_check()` function in main.py tests database connectivity on startup
-- Writes "ok" or "error" to `status.txt`
-- Docker HEALTHCHECK reads this file every 10 minutes
-- Container is marked unhealthy if status.txt contains "error"
+The application includes Docker-based health monitoring:
+- Docker HEALTHCHECK uses curl to test the HTTP endpoint every 10 minutes
+- Tests that the application is responding to requests (returns HTTP 200)
+- Container is marked unhealthy if endpoint fails to respond
+- Command: `curl -sSf -o /dev/null -w "%{http_code}" http://127.0.0.1:8005 || exit 1`
 
 ## Architecture
 
