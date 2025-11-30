@@ -1,6 +1,6 @@
 from peewee import SqliteDatabase
 from database_model import db, Component, GearConfiguration, UserPreference
-from utils import generate_uuid
+from utils import generate_uuid, empty_to_none
 import logging
 import datetime
 import os
@@ -46,7 +46,7 @@ def add_component(name, type, teeth, speed=None, comments=None):
             type=type,
             speed=speed,
             teeth=teeth,
-            comments=comments if comments and comments != "None" else None
+            comments=empty_to_none(comments)
         )
         return component
     except Exception as e:
@@ -61,7 +61,7 @@ def update_component(component_id, name, type, teeth, speed=None, comments=None)
             type=type,
             speed=speed,
             teeth=teeth,
-            comments=comments if comments and comments != "None" else None
+            comments=empty_to_none(comments)
         ).where(Component.id == component_id)
         return query.execute()
     except Exception as e:
@@ -115,7 +115,7 @@ def add_configuration(name, front_component_id, rear_component_id, comments=None
             name=name,
             front_component_id=front_component_id,
             rear_component_id=rear_component_id,
-            comments=comments if comments and comments != "None" else None
+            comments=empty_to_none(comments)
         )
         return config
     except Exception as e:
@@ -129,7 +129,7 @@ def update_configuration(config_id, name, front_component_id, rear_component_id,
             name=name,
             front_component_id=front_component_id,
             rear_component_id=rear_component_id,
-            comments=comments if comments and comments != "None" else None
+            comments=empty_to_none(comments)
         ).where(GearConfiguration.id == config_id)
         return query.execute()
     except Exception as e:
