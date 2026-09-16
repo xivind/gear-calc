@@ -20,6 +20,7 @@ Gear Calc is a lightweight web application built with:
 - **Backend**: FastAPI (Python) for robust and fast API handling.
 - **Database**: SQLite for simple, self-contained data storage.
 - **Frontend**: Server-side rendered HTML using Jinja2 templates for a fast and responsive user interface without complex client-side frameworks.
+- **Package management**: uv (not pip)
 
 ## Usage
 
@@ -33,7 +34,7 @@ Gear Calc is a lightweight web application built with:
 
 2.  Install dependencies:
     ```bash
-    pip install -r requirements.txt
+    uv sync
     ```
 
 ### Running the App
@@ -42,13 +43,13 @@ Gear Calc is a lightweight web application built with:
 
     **With hot reload (detects code changes automatically):**
     ```bash
-    uvicorn main:app --host 0.0.0.0 --port 8005 --reload --log-config uvicorn_log_config.ini
+    uv run uvicorn main:app --host 0.0.0.0 --port 8005 --reload --log-config uvicorn_log_config.ini
     ```
     Note: You may see "1 change detected" messages due to log files being written. This is harmless - uvicorn detects the changes but doesn't actually reload.
 
     **Without hot reload (clean console, manual restart needed):**
     ```bash
-    uvicorn main:app --host 0.0.0.0 --port 8005 --log-config uvicorn_log_config.ini
+    uv run uvicorn main:app --host 0.0.0.0 --port 8005 --log-config uvicorn_log_config.ini
     ```
 
 2.  Open your browser and navigate to:
