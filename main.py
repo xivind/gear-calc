@@ -30,15 +30,14 @@ def startup_event():
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     configs = business_logic.get_landing_page_data()
-    return templates.TemplateResponse("index.html", {"request": request, "configs": configs})
+    return templates.TemplateResponse(request, "index.html", {"configs": configs})
 
 @app.get("/calculator", response_class=HTMLResponse)
 async def calculator_page(request: Request):
     chainrings = business_logic.get_component_options("Chainring")
     cassettes = business_logic.get_component_options("Cassette")
-    return templates.TemplateResponse("gear_ratio.html", {
-        "request": request, 
-        "chainrings": chainrings, 
+    return templates.TemplateResponse(request, "gear_ratio.html", {
+        "chainrings": chainrings,
         "cassettes": cassettes,
         "config": None
     })
@@ -46,7 +45,7 @@ async def calculator_page(request: Request):
 @app.get("/preferences", response_class=HTMLResponse)
 async def get_preferences(request: Request):
     prefs = database_manager.get_user_preferences()
-    return templates.TemplateResponse("preferences.html", {"request": request, "preferences": prefs})
+    return templates.TemplateResponse(request, "preferences.html", {"preferences": prefs})
 
 @app.post("/preferences")
 async def save_preferences(
@@ -65,8 +64,7 @@ async def calculator_detail(request: Request, config_id: str):
     chainrings = business_logic.get_component_options("Chainring")
     cassettes = business_logic.get_component_options("Cassette")
     
-    return templates.TemplateResponse("gear_ratio.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "gear_ratio.html", {
         "chainrings": chainrings,
         "cassettes": cassettes,
         "config": details["config"],
@@ -83,8 +81,7 @@ async def calculate_preview(
     rear_component_id: str = Form(...)
 ):
     gear_tables = business_logic.calculate_from_components(front_component_id, rear_component_id)
-    return templates.TemplateResponse("partials/calculation_results.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "partials/calculation_results.html", {
         "gear_tables": gear_tables
     })
 
@@ -121,8 +118,7 @@ async def delete_configuration(config_id: str):
 async def components_page(request: Request):
     chainrings = business_logic.get_components_by_type("Chainring")
     cassettes = business_logic.get_components_by_type("Cassette")
-    return templates.TemplateResponse("components.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "components.html", {
         "chainrings": chainrings,
         "cassettes": cassettes,
         "edit_component": None
@@ -134,8 +130,7 @@ async def edit_component_page(request: Request, component_id: str):
     cassettes = business_logic.get_components_by_type("Cassette")
     component = business_logic.get_component(component_id)
     
-    return templates.TemplateResponse("components.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "components.html", {
         "chainrings": chainrings,
         "cassettes": cassettes,
         "edit_component": component
