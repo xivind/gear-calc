@@ -11,6 +11,12 @@ Gear Calc is a self-hosted bicycle gear ratio calculator built with FastAPI and 
 ### Running the Application
 
 ```bash
+# Install dependencies (creates .venv from uv.lock; add packages with `uv add`, never edit uv.lock by hand)
+uv sync
+
+# Activate venv
+source .venv/bin/activate
+
 # Development with hot reload (detects code changes automatically)
 # Note: You may see "1 change detected" messages due to log files being written.
 # This is harmless - uvicorn detects the changes but doesn't actually reload.
